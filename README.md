@@ -1,2 +1,2 @@
 # crc-vscode-extension
-A vscode extension to create fast a react component
+A vscode extension to create a react component in visual studio code
