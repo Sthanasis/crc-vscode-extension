@@ -17,10 +17,10 @@ export function activate(context: vscode.ExtensionContext) {
   // The commandId (generateReactComponent) parameter must match the command field in package.json
   let disposable = vscode.commands.registerCommand(
     'ml-react-component-generator.generateReactComponent',
-    () => {
+    (url) => {
       // The code you place here will be executed every time your command is executed
       // Create a directory in the current workspace
-      generateDirectoryInCurrentWorkspace();
+      generateDirectoryOnUserClick(url);
     }
   );
 
@@ -37,38 +37,32 @@ function getCurrentWorkspacePath(): vscode.WorkspaceFolder | undefined {
   return undefined;
 }
 
-async function generateDirectoryInCurrentWorkspace() {
-  const componentName = await vscode.window.showInputBox({
-    prompt: 'Component Name',
-    placeHolder: 'MyComponent',
-  });
-  const workspace = getCurrentWorkspacePath();
+async function generateDirectoryOnUserClick(uri?: vscode.Uri) {
   try {
-    if (!workspace) {
-      vscode.window.showErrorMessage('No workspace found');
+    let target: string | undefined;
+
+    if (uri) {
+      target = uri.fsPath;
+    } else {
+      target = getCurrentWorkspacePath()?.uri.fsPath;
+    }
+
+    const componentName = await vscode.window.showInputBox({
+      prompt: 'Component Name',
+      placeHolder: 'MyComponent',
+    });
+
+    if (!target) {
+      vscode.window.showErrorMessage('Invalid path uri');
       return;
     }
+
     if (!componentName) {
       vscode.window.showErrorMessage('Invalid Component Name');
       return;
     }
-    const componentDirectory = path.join(workspace.uri.fsPath, componentName);
-    fs.mkdirSync(componentDirectory);
 
-    const componentIndexFile = path.join(componentDirectory, 'index.js');
-    const componentNamedFile = path.join(
-      componentDirectory,
-      `${componentName}.js`
-    );
-
-    fs.writeFileSync(
-      componentIndexFile,
-      `export { default } from './${componentName}';`
-    );
-    fs.writeFileSync(
-      componentNamedFile,
-      `import React from 'react';\n\nconst ${componentName} = () => {\n  return <></>;\n};\n\nexport default ${componentName};`
-    );
+    generateComponent(target, componentName);
   } catch (err) {
     vscode.window.showErrorMessage(
       'Something went wrong while creating the component!'
@@ -76,5 +70,21 @@ async function generateDirectoryInCurrentWorkspace() {
   }
 }
 
+function generateComponent(targetPath: string, cmpName: string) {
+  const componentDirectory = path.join(targetPath, cmpName);
+  fs.mkdirSync(componentDirectory);
+
+  const componentIndexFile = path.join(componentDirectory, 'index.js');
+  const componentNamedFile = path.join(componentDirectory, `${cmpName}.js`);
+
+  fs.writeFileSync(
+    componentIndexFile,
+    `export { default } from './${cmpName}';`
+  );
+  fs.writeFileSync(
+    componentNamedFile,
+    `import React from 'react';\n\nconst ${cmpName} = () => {\n  return <></>;\n};\n\nexport default ${cmpName};`
+  );
+}
 // this method is called when your extension is deactivated
 export function deactivate() {}

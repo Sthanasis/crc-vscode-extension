@@ -19,7 +19,14 @@
         "command": "ml-react-component-generator.generateReactComponent",
         "title": "Generate React Component"
       }
-    ]
+    ],
+    "menus": {
+      "explorer/context": [
+        {
+          "command": "ml-react-component-generator.generateReactComponent"
+        }
+      ]
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run package",
