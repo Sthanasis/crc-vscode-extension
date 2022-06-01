@@ -46,23 +46,29 @@ async function generateDirectoryInCurrentWorkspace(
     prompt: 'Component Name',
     placeHolder: 'MyComponent',
   });
-  if (componentName) {
-    const componentDirectory = path.join(workspace.uri.fsPath, componentName);
-    fs.mkdirSync(componentDirectory);
+  try {
+    if (componentName) {
+      const componentDirectory = path.join(workspace.uri.fsPath, componentName);
+      fs.mkdirSync(componentDirectory);
 
-    const componentIndexFile = path.join(componentDirectory, 'index.js');
-    const componentNamedFile = path.join(
-      componentDirectory,
-      `${componentName}.js`
-    );
+      const componentIndexFile = path.join(componentDirectory, 'index.js');
+      const componentNamedFile = path.join(
+        componentDirectory,
+        `${componentName}.js`
+      );
 
-    fs.writeFileSync(
-      componentIndexFile,
-      `export { default } from './${componentName}';`
-    );
-    fs.writeFileSync(
-      componentNamedFile,
-      `import React from 'react';\n\nconst ${componentName} = () => {\n  return <></>;\n};\n\nexport default ${componentName};`
+      fs.writeFileSync(
+        componentIndexFile,
+        `export { default } from './${componentName}';`
+      );
+      fs.writeFileSync(
+        componentNamedFile,
+        `import React from 'react';\n\nconst ${componentName} = () => {\n  return <></>;\n};\n\nexport default ${componentName};`
+      );
+    }
+  } catch (err) {
+    vscode.window.showErrorMessage(
+      'Something went wrong while creating the component!'
     );
   }
 }
