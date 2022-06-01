@@ -10,14 +10,14 @@
     "Other"
   ],
   "activationEvents": [
-    "onCommand:ml-react-component-generator.Generate-React-Component"
+    "onCommand:ml-react-component-generator.generateReactComponent"
   ],
   "main": "./dist/extension.js",
   "contributes": {
     "commands": [
       {
-        "command": "ml-react-component-generator.Generate-React-Component",
-        "title": "Hello World"
+        "command": "ml-react-component-generator.generateReactComponent",
+        "title": "Generate React Component"
       }
     ]
   },
