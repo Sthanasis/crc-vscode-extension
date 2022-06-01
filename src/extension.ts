@@ -20,52 +20,55 @@ export function activate(context: vscode.ExtensionContext) {
     () => {
       // The code you place here will be executed every time your command is executed
       // Create a directory in the current workspace
-      if (vscode.workspace.workspaceFolders) {
-        const workspaceDir = vscode.workspace.workspaceFolders[0].uri.fsPath;
-        const workspace = vscode.workspace.getWorkspaceFolder(
-          vscode.Uri.file(workspaceDir)
-        );
-        if (workspace) {
-          generateDirectoryInCurrentWorkspace(workspace);
-        } else {
-          vscode.window.showErrorMessage('No workspace found');
-        }
-      } else {
-        vscode.window.showErrorMessage('Workspace Directory is not found');
-      }
+      generateDirectoryInCurrentWorkspace();
     }
   );
 
   context.subscriptions.push(disposable);
 }
+function getCurrentWorkspacePath(): vscode.WorkspaceFolder | undefined {
+  if (vscode.workspace.workspaceFolders) {
+    const workspaceDir = vscode.workspace.workspaceFolders[0].uri.fsPath;
+    const workspace = vscode.workspace.getWorkspaceFolder(
+      vscode.Uri.file(workspaceDir)
+    );
+    return workspace;
+  }
+  return undefined;
+}
 
-async function generateDirectoryInCurrentWorkspace(
-  workspace: vscode.WorkspaceFolder
-) {
+async function generateDirectoryInCurrentWorkspace() {
   const componentName = await vscode.window.showInputBox({
     prompt: 'Component Name',
     placeHolder: 'MyComponent',
   });
+  const workspace = getCurrentWorkspacePath();
   try {
-    if (componentName) {
-      const componentDirectory = path.join(workspace.uri.fsPath, componentName);
-      fs.mkdirSync(componentDirectory);
-
-      const componentIndexFile = path.join(componentDirectory, 'index.js');
-      const componentNamedFile = path.join(
-        componentDirectory,
-        `${componentName}.js`
-      );
-
-      fs.writeFileSync(
-        componentIndexFile,
-        `export { default } from './${componentName}';`
-      );
-      fs.writeFileSync(
-        componentNamedFile,
-        `import React from 'react';\n\nconst ${componentName} = () => {\n  return <></>;\n};\n\nexport default ${componentName};`
-      );
+    if (!workspace) {
+      vscode.window.showErrorMessage('No workspace found');
+      return;
     }
+    if (!componentName) {
+      vscode.window.showErrorMessage('Invalid Component Name');
+      return;
+    }
+    const componentDirectory = path.join(workspace.uri.fsPath, componentName);
+    fs.mkdirSync(componentDirectory);
+
+    const componentIndexFile = path.join(componentDirectory, 'index.js');
+    const componentNamedFile = path.join(
+      componentDirectory,
+      `${componentName}.js`
+    );
+
+    fs.writeFileSync(
+      componentIndexFile,
+      `export { default } from './${componentName}';`
+    );
+    fs.writeFileSync(
+      componentNamedFile,
+      `import React from 'react';\n\nconst ${componentName} = () => {\n  return <></>;\n};\n\nexport default ${componentName};`
+    );
   } catch (err) {
     vscode.window.showErrorMessage(
       'Something went wrong while creating the component!'
