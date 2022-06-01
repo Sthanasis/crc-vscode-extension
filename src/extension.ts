@@ -1,7 +1,8 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
-
+import * as fs from 'fs';
+import * as path from 'path';
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
@@ -13,19 +14,24 @@ export function activate(context: vscode.ExtensionContext) {
 
   // The command has been defined in the package.json file
   // Now provide the implementation of the command with registerCommand
-  // The commandId parameter must match the command field in package.json
+  // The commandId (generateReactComponent) parameter must match the command field in package.json
   let disposable = vscode.commands.registerCommand(
-    'ml-react-component-generator.Generate-React-Component',
+    'ml-react-component-generator.generateReactComponent',
     () => {
       // The code you place here will be executed every time your command is executed
       // Create a directory in the current workspace
-      const workspace = vscode.workspace.getWorkspaceFolder(
-        vscode.window.activeTextEditor?.document.uri as vscode.Uri
-      );
-      if (workspace) {
-        generateDirectoryInCurrentWorkspace(workspace);
+      if (vscode.workspace.workspaceFolders) {
+        const workspaceDir = vscode.workspace.workspaceFolders[0].uri.fsPath;
+        const workspace = vscode.workspace.getWorkspaceFolder(
+          vscode.Uri.file(workspaceDir)
+        );
+        if (workspace) {
+          generateDirectoryInCurrentWorkspace(workspace);
+        } else {
+          vscode.window.showErrorMessage('No workspace found');
+        }
       } else {
-        vscode.window.showErrorMessage('No workspace found');
+        vscode.window.showErrorMessage('Workspace Directory is not found');
       }
     }
   );
@@ -33,36 +39,32 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(disposable);
 }
 
-function generateDirectoryInCurrentWorkspace(
+async function generateDirectoryInCurrentWorkspace(
   workspace: vscode.WorkspaceFolder
 ) {
-  const fs = require('fs');
-  const path = require('path');
-  const componentName = vscode.window.showInputBox({
+  const componentName = await vscode.window.showInputBox({
     prompt: 'Component Name',
     placeHolder: 'MyComponent',
   });
-  const componentDirectory = path.join(workspace.uri.fsPath, componentName);
-  fs.mkdirSync(componentDirectory);
+  if (componentName) {
+    const componentDirectory = path.join(workspace.uri.fsPath, componentName);
+    fs.mkdirSync(componentDirectory);
 
-  const componentIndexFile = path.join(componentDirectory, 'index.js');
-  const componentNamedFile = path.join(componentName, `${componentName}.js`);
+    const componentIndexFile = path.join(componentDirectory, 'index.js');
+    const componentNamedFile = path.join(
+      componentDirectory,
+      `${componentName}.js`
+    );
 
-  fs.writeFileSync(
-    componentIndexFile,
-    `export { default } from './${componentNamedFile}';`
-  );
-  fs.writeFileSync(
-    componentNamedFile,
-    `import React from 'react';
-
-	   const ${componentName} = () => {
-		   return <></>;
-	   };
-	   
-	   export default ${componentName};	 
-	  `
-  );
+    fs.writeFileSync(
+      componentIndexFile,
+      `export { default } from './${componentName}';`
+    );
+    fs.writeFileSync(
+      componentNamedFile,
+      `import React from 'react';\n\nconst ${componentName} = () => {\n  return <></>;\n};\n\nexport default ${componentName};`
+    );
+  }
 }
 
 // this method is called when your extension is deactivated
