@@ -10,20 +10,24 @@ function generateComponent(targetPath: string, cmpName: string) {
   const componentDirectory = path.join(targetPath, capitalizedName);
   fs.mkdirSync(componentDirectory);
 
-  const componentIndexFile = path.join(componentDirectory, 'index.js');
-  const componentNamedFile = path.join(
+  const indexFile = path.join(componentDirectory, 'index.js');
+  const namedFile = path.join(componentDirectory, `${capitalizedName}.js`);
+
+  const testFile = path.join(
     componentDirectory,
-    `${capitalizedName}.js`
+    `${cmpName.toLocaleLowerCase()}.test.js`
   );
 
   fs.writeFileSync(
-    componentIndexFile,
+    indexFile,
     `export { default } from './${capitalizedName}';`
   );
   fs.writeFileSync(
-    componentNamedFile,
+    namedFile,
     `import React from 'react';\n\nconst ${capitalizedName} = () => {\n  return <></>;\n};\n\nexport default ${capitalizedName};`
   );
+
+  fs.writeFileSync(testFile, `/* Write the test cases here! */`);
 }
 
 function getCurrentWorkspacePath(): vscode.WorkspaceFolder | undefined {
