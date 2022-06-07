@@ -2,13 +2,13 @@
   "name": "ml-react-component-generator",
   "displayName": "ml-react-component-generator",
   "description": "A react component generator used by Mainlevel Consulting AG",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "icon": "images/favicon.ico",
   "publisher": "sthanasis",
   "engines": {
     "vscode": "^1.67.0"
   },
-  "repository" : {
+  "repository": {
     "type": "git",
     "url": "https://github.com/Sthanasis/crc-vscode-extension"
   },
