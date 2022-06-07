@@ -2,10 +2,11 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 
-import { capitalize } from './utilities';
+import { capitalize, lowercaseTheFirstLetter } from './utilities';
 
 function generateComponent(targetPath: string, cmpName: string) {
   const capitalizedName = capitalize(cmpName);
+  const lowerCasedName = lowercaseTheFirstLetter(capitalizedName);
 
   const componentDirectory = path.join(targetPath, capitalizedName);
   fs.mkdirSync(componentDirectory);
@@ -13,10 +14,7 @@ function generateComponent(targetPath: string, cmpName: string) {
   const indexFile = path.join(componentDirectory, 'index.js');
   const namedFile = path.join(componentDirectory, `${capitalizedName}.js`);
 
-  const testFile = path.join(
-    componentDirectory,
-    `${cmpName.toLocaleLowerCase()}.test.js`
-  );
+  const testFile = path.join(componentDirectory, `${lowerCasedName}.test.js`);
 
   fs.writeFileSync(
     indexFile,
