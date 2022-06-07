@@ -3,6 +3,7 @@
   "displayName": "ml-react-component-generator",
   "description": "A react component generator used by MainLevel (copyrights Athanasios Simos)",
   "version": "0.0.1",
+  "icon": "images/favicon.ico",
   "engines": {
     "vscode": "^1.67.0"
   },
