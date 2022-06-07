@@ -8,6 +8,10 @@
   "engines": {
     "vscode": "^1.67.0"
   },
+  "repository" : {
+    "type": "git",
+    "url": "https://github.com/Sthanasis/crc-vscode-extension"
+  },
   "categories": [
     "Other"
   ],
