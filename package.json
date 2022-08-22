@@ -1,8 +1,8 @@
 {
-  "name": "ml-react-component-generator",
-  "displayName": "ml-react-component-generator",
-  "description": "A react component generator used by Mainlevel Consulting AG",
-  "version": "0.0.2",
+  "name": "react-component-generator",
+  "displayName": "react-component-generator",
+  "description": "A react component generator",
+  "version": "1.0.0",
   "icon": "images/favicon.ico",
   "publisher": "sthanasis",
   "engines": {
@@ -16,20 +16,20 @@
     "Other"
   ],
   "activationEvents": [
-    "onCommand:ml-react-component-generator.generateReactComponent"
+    "onCommand:react-component-generator.generateReactComponent"
   ],
   "main": "./dist/extension.js",
   "contributes": {
     "commands": [
       {
-        "command": "ml-react-component-generator.generateReactComponent",
+        "command": "react-component-generator.generateReactComponent",
         "title": "Generate React Component"
       }
     ],
     "menus": {
       "explorer/context": [
         {
-          "command": "ml-react-component-generator.generateReactComponent"
+          "command": "react-component-generator.generateReactComponent"
         }
       ]
     }
